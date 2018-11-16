@@ -12,6 +12,7 @@ const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 const debug = require('debug')('koa2:server')
 const path = require('path')
+const cors = require('koa2-cors')       //引入跨域插件
 
 const config = require('./config')
 const routes = require('./routes')
@@ -22,6 +23,7 @@ const port = process.env.PORT || config.port
 onerror(app)
 
 // middlewares
+app.use(cors())       //允许跨域
 app.use(bodyparser())
   .use(json())
   .use(logger())
@@ -48,6 +50,13 @@ router.get('/', async (ctx, next) => {
     title: 'Koa2'
   }
   await ctx.render('index', ctx.state)
+})
+
+router.get('/api/hello',async (ctx,next)=>{
+  ctx.body=JSON.stringify({name:'scholes',job:'webcoder'});
+  // ctx.body = ctx
+  await next();
+  
 })
 
 routes(router)
