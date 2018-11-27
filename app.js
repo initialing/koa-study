@@ -92,6 +92,14 @@ router.post('/api/data',async (ctx,next)=>{
   await next()
 })
 
+router.get('/api/queryid/:id',async (ctx,next)=>{
+  let temp = []
+  temp.push(ctx.params)
+  temp.push(ctx.query)
+  ctx.response.body = temp
+  await next()
+})
+
 routes(router)
 app.on('error', function(err, ctx) {
   console.log(err)
