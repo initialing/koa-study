@@ -13,18 +13,36 @@ const logger = require('koa-logger')
 const debug = require('debug')('koa2:server')
 const path = require('path')
 const cors = require('koa2-cors')       //引入跨域插件
+// const mongo = require('koa-mongo')
+// const startup = require('./startup')
+const Monk = require('monk')
+const mongodb = Monk('localhost/test')
+const test = mongodb.get('test')
 
 const config = require('./config')
 const routes = require('./routes')
 
+// const mgconf = {
+//   uri:'mongodb://zqt:1234321@localhost:27017/test',
+//   // user:"zqt",
+//   // password:'1234321',
+//   dbname:'test',
+//   max: 100,
+//   min: 1,
+//   timeout: 30000,
+//   log:false
+// }
 const port = process.env.PORT || config.port
 
 // error handler
 onerror(app)
 
+// const mongodb = convert(mongo(mgconf))
+
+// startup(mongodb,mgconf)
 // middlewares
 app.use(cors())       //允许跨域
-app.use(bodyparser())
+app.use(bodyparser())//该中间件用以解析post请求中的data数据
   .use(json())
   .use(logger())
   .use(require('koa-static')(__dirname + '/public'))
@@ -52,11 +70,26 @@ router.get('/', async (ctx, next) => {
   await ctx.render('index', ctx.state)
 })
 
-router.get('/api/hello',async (ctx,next)=>{
-  ctx.body=JSON.stringify({name:'scholes',job:'webcoder'});
-  // ctx.body = ctx
+// app.use(mongo())
+
+router.get('/api/hello', async (ctx,next)=>{
+  // ctx.body=JSON.stringify({name:'scholes',job:'webcoder'});
+  try{
+    ctx.body = await test.find(ctx.request.query)
+    // ctx.body = ctx.request
+    console.log('qurey=====>',ctx.request.query,typeof(ctx.request.query))
+    // ctx.body = ctx.mongo.collection("test")
+  }catch(e){
+    console.log(e)
+  }
   await next();
   
+})
+
+router.post('/api/data',async (ctx,next)=>{
+  ctx.response.body = await test.find(ctx.request.body.data)
+  // ctx.body = ctx.request.body
+  await next()
 })
 
 routes(router)
