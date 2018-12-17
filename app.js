@@ -13,11 +13,12 @@ const logger = require('koa-logger')
 const debug = require('debug')('koa2:server')
 const path = require('path')
 const cors = require('koa2-cors')       //引入跨域插件
+const api = require('./controller/api.js')
 // const mongo = require('koa-mongo')
 // const startup = require('./startup')
 const Monk = require('monk')
 const mongodb = Monk('localhost/test')
-const test = mongodb.get('test')
+// const test = mongodb.get('test')
 
 const config = require('./config')
 const routes = require('./routes')
@@ -57,48 +58,14 @@ app.use(bodyparser())//该中间件用以解析post请求中的data数据
 // logger
 app.use(async (ctx, next) => {
   const start = new Date()
+  console.log('mongo=====>',ctx.mongo)
   await next()
   const ms = new Date() - start
   console.log(`${ctx.method} ${ctx.url} - $ms`)
 })
 
-router.get('/', async (ctx, next) => {
-  // ctx.body = 'Hello World'
-  ctx.state = {
-    title: 'Koa2'
-  }
-  await ctx.render('index', ctx.state)
-})
 
-// app.use(mongo())
-
-router.get('/api/hello', async (ctx,next)=>{
-  // ctx.body=JSON.stringify({name:'scholes',job:'webcoder'});
-  try{
-    ctx.body = await test.find(ctx.request.query)
-    // ctx.body = ctx.request
-    console.log('qurey=====>',ctx.request.query,typeof(ctx.request.query))
-    // ctx.body = ctx.mongo.collection("test")
-  }catch(e){
-    console.log(e)
-  }
-  await next();
-  
-})
-
-router.post('/api/data',async (ctx,next)=>{
-  ctx.response.body = await test.find(ctx.request.body.data)
-  // ctx.body = ctx.request.body
-  await next()
-})
-
-router.get('/api/queryid/:id',async (ctx,next)=>{
-  let temp = []
-  temp.push(ctx.params)
-  temp.push(ctx.query)
-  ctx.response.body = temp
-  await next()
-})
+app.use(convert(api.routes()))
 
 routes(router)
 app.on('error', function(err, ctx) {
