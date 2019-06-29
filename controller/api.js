@@ -44,4 +44,9 @@ api.post('/api/tencentai',async (ctx,next)=>{
     await next()
 
 })
+
+api.all('/api/test', async (ctx, next)=>{
+    ctx.body = 'connect succed'
+    await next();
+})
 module.exports = api
