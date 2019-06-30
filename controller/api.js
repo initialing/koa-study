@@ -2,6 +2,7 @@ const Router = require('koa-router')
 const Monk = require('monk')
 const tencentAI = require('tencent-ai-nodejs-sdk')
 const mongodb = Monk('localhost/test')
+const axios = require('axios')
 
 const api = new Router();
 
@@ -48,5 +49,19 @@ api.post('/api/tencentai',async (ctx,next)=>{
 api.all('/api/test', async (ctx, next)=>{
     ctx.body = 'connect succed'
     await next();
+})
+
+api.all('/api/getsign', async (ctx, next)=>{
+    const signUrl = 'https://admin-cmsqa.cw.sgmlink.com/api/public/util?entry=filepicker/sign'
+    const signData = {
+        "sid": "S1IY3IVqE",
+        "userid": "apptest10",
+        "token": "3EAD4F78392A4DB49DD3FD3DFCF09440",
+        "url": "https://admin-cmsqa.cw.sgmlink.com/api/public/util"
+    }
+    const res = await axios.post(signUrl, signData)
+    ctx.body = res.data
+
+    await next()
 })
 module.exports = api
