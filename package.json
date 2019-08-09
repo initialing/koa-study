@@ -19,10 +19,14 @@
     "koa-static": "^3.0.0",
     "koa-views": "^6.0.2",
     "koa2-cors": "^2.0.6",
+    "lodash": "^4.17.15",
+    "moment": "^2.24.0",
     "monk": "^6.0.6",
+    "node-xlsx": "^0.15.0",
     "nunjucks": "^3.2.0",
     "path": "^0.12.7",
-    "tencent-ai-nodejs-sdk": "^1.0.12"
+    "tencent-ai-nodejs-sdk": "^1.0.12",
+    "xml2js": "^0.4.19"
   },
   "devDependencies": {
     "babel-eslint": "7.1.1",

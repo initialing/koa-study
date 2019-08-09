@@ -64,4 +64,22 @@ api.all('/api/getsign', async (ctx, next)=>{
 
     await next()
 })
+
+api.post('/api/post', async (ctx, next)=>{
+    console.log('api/post query======>',ctx.query)
+    console.log('api/post params======>',ctx.request.rawBody)
+    let res = {
+        reeCode: 0,
+        errMsg: 'succeed',
+        body:[]
+    }
+    if(ctx.request.rawBody){
+        res.body.push(JSON.parse(ctx.request.rawBody))
+    }
+    if(JSON.stringify(ctx.query) != "{}"){
+        res.body.push(ctx.query)
+    }
+    ctx.body = res
+    await next();
+})
 module.exports = api
